@@ -2,7 +2,7 @@ CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
-  phone VARCHAR(30) NOT NULL,
+  phone VARCHAR(30),
   password_hash VARCHAR(255) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -213,3 +213,6 @@ CREATE INDEX ON projects (owner_id);
 CREATE INDEX ON project_members (user_id);
 CREATE INDEX ON payments (payment_link_id);
 CREATE INDEX ON payouts (user_id);
+
+-- making phone number optional in the users table
+ALTER TABLE users ALTER COLUMN phone DROP NOT NULL;
