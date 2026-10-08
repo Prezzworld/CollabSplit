@@ -11,4 +11,15 @@ const createUser = async ({ name, email, phone, passwordHash }) => {
   return rows[0];
 };
 
-module.exports = { createUser };
+const findUserByEmail = async (email) => {
+  const selectQuery = `
+    SELECT id, name, email, phone, password_hash, created_at
+    FROM users
+    WHERE email = $1
+  `;
+  const values = [email];
+  const { rows } = await pool.query(selectQuery, values);
+  return rows[0]; 
+};
+
+module.exports = { createUser, findUserByEmail };
