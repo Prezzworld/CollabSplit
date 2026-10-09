@@ -1,8 +1,15 @@
 const express = require("express")
 const router = express.Router(); 
 const {signup, login} = require("../controllers/auth.controller")
+const {authenticate} = require("../middlewares/auth.middleware")
 
 router.post("/signup", signup)
 router.post("/login", login)
+router.get("/me", authenticate, (req, res) => {
+  return res.status(200).json({
+    success: true,
+    data: req.user
+  })
+})
 
 module.exports = router
