@@ -147,7 +147,7 @@ ALTER TABLE project_members ADD CONSTRAINT role_check CHECK (role IN ('owner', '
 ALTER TABLE projects ADD COLUMN status TEXT NOT NULL DEFAULT 'active', ADD CONSTRAINT status_check CHECK (status IN ('active', 'archived'));
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$ 
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
@@ -216,3 +216,13 @@ CREATE INDEX ON payouts (user_id);
 
 -- making phone number optional in the users table
 ALTER TABLE users ALTER COLUMN phone DROP NOT NULL;
+
+-- making bank_name, country and account_number nullable/optional in project_members table
+alter table project_members 
+	alter column bank_name drop not null,
+	alter column account_number drop not null,
+	alter column country drop not null;
+
+-- Change percentage_range constant
+ALTER TABLE project_members DROP CONSTRAINT percentage_range;
+ALTER TABLE project_members ADD CONSTRAINT percentage_range CHECK (percentage >= 0 AND percentage <= 100);
