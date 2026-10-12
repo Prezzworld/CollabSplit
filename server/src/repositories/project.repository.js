@@ -26,4 +26,13 @@ const createProject = async ({
   }
 };
 
-module.exports = { createProject };
+const findProjectById = async (projectId, client = pool) => {
+  const selectQuery = `
+    SELECT id, owner_id, status FROM projects WHERE id = $1
+  `;
+  const values = [projectId];
+  const { rows } = await client.query(selectQuery, values);
+  return rows[0];
+};
+
+module.exports = { createProject, findProjectById };

@@ -226,3 +226,6 @@ alter table project_members
 -- Change percentage_range constant
 ALTER TABLE project_members DROP CONSTRAINT percentage_range;
 ALTER TABLE project_members ADD CONSTRAINT percentage_range CHECK (percentage >= 0 AND percentage <= 100);
+
+-- Alter project_members table to add email field
+ALTER TABLE project_members ADD COLUMN email VARCHAR(255) NOT NULL;
