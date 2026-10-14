@@ -229,3 +229,9 @@ ALTER TABLE project_members ADD CONSTRAINT percentage_range CHECK (percentage >=
 
 -- Alter project_members table to add email field
 ALTER TABLE project_members ADD COLUMN email VARCHAR(255) NOT NULL;
+
+-- Add description and suggested_amount fields to payment_links
+ALTER TABLE payment_links ADD COLUMN description TEXT;
+ALTER TABLE payment_links ADD COLUMN suggested_amount NUMERIC(18,2);
+ALTER TABLE payment_links ADD CONSTRAINT suggested_amount_positive
+  CHECK (suggested_amount IS NULL OR suggested_amount > 0);
