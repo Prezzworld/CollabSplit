@@ -35,4 +35,5 @@ const findLinkByToken = async (token, client = pool) => {
   return rows[0];
 };
 
-module.exports = {findLinkByProject, findLinkByToken, createPaymentLink}
+
+module.exports = { findLinkByProject, findLinkByToken, createPaymentLink };
