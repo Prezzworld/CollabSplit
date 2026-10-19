@@ -35,5 +35,16 @@ const findLinkByToken = async (token, client = pool) => {
   return rows[0];
 };
 
+const findLinkById = async (linkId, client = pool) => {
+  const selectQuery = `
+    SELECT id, project_id, token, status, description, suggested_amount, created_at
+    FROM payment_links
+    WHERE id = $1
+  `;
+  const values = [linkId];
+  const { rows } = await client.query(selectQuery, values);
+  return rows[0];
+};
 
-module.exports = { findLinkByProject, findLinkByToken, createPaymentLink };
+
+module.exports = { findLinkByProject, findLinkByToken, createPaymentLink, findLinkById };

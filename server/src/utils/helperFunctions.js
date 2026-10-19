@@ -56,4 +56,30 @@ const assertProjectPayable = async (projectId) => {
   return members;
 };
 
-module.exports = { requireOwner, assertProjectPayable };
+const calculateSplits = (amountNaira, members) => {
+  const splits = members.map((m) => ({
+    userId: m.user_id,
+    percentage: Number(m.percentage),
+    bankName: m.bank_name,
+    bankCode: m.bank_code,
+    accountNumber: m.account_number,
+    country: m.country,
+    amount: Math.round(amountNaira * Number(m.percentage)) / 100,
+  }));
+
+  const total = splits.reduce((s, x) => s + x.amount, 0);
+  const diff = Math.round((amountNaira - total) * 100) / 100;
+
+  if (diff !== 0) {
+    // Assign residual to owner (role='owner')
+    const owner = splits.find((s) => {
+      const member = members.find((m) => m.user_id === s.userId);
+      return member.role === "owner";
+    });
+    if (owner) owner.amount = Math.round((owner.amount + diff) * 100) / 100;
+  }
+
+  return splits;
+};
+
+module.exports = { requireOwner, assertProjectPayable, calculateSplits };
