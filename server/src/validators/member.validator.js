@@ -6,7 +6,6 @@ const memberSchema = z.object({
     .trim()
     .email()
     .transform((email) => email.toLowerCase()),
-  role: z.enum(["collaborator"]),
   percentage: z.number().min(0).max(100),
   bank_name: z.string().trim().min(2).max(255),
   bank_code: z.string().trim().min(2).max(20),
@@ -18,8 +17,7 @@ const memberSchema = z.object({
     .transform((country) => country.toUpperCase()),
 });
 
-const updateMemberSchema = z.object({
-  percentage: z.number().min(0).max(100),
+const updateMemberDetailsSchema = z.object({
   bank_name: z.string().trim().min(2).max(255),
   bank_code: z.string().trim().min(2).max(20),
   account_number: z.string().trim().min(5).max(50),
@@ -30,4 +28,8 @@ const updateMemberSchema = z.object({
     .transform((country) => country.toUpperCase()),
 });
 
-module.exports = { memberSchema, updateMemberSchema };
+const updatePercentageSchema = z.object({
+  percentage: z.number().min(0).max(100),
+});
+
+module.exports = { memberSchema, updateMemberDetailsSchema, updatePercentageSchema };

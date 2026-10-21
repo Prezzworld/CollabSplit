@@ -32,16 +32,16 @@ const updatePaymentStatus = async ({ referenceId, status }, client = pool) => {
 };
 
 const updatePaymentSuccess = async (
-  { referenceId, payerName, feeAmount },
+  { referenceId, payerName, feesAmount },
   client = pool,
 ) => {
   const updateQuery = `
     UPDATE payments
     SET status = 'successful', payer_name = $1, fees_amount = $2
-    WHERE reference_id = $3
+    WHERE reference_id = $3 AND status = 'pending'
     RETURNING id, payment_link_id, amount, currency, payer_email, payer_name, reference_id, status, created_at
   `;
-  const values = [referenceId, payerName, feeAmount];
+  const values = [ payerName, feesAmount, referenceId];
   const { rows } = await client.query(updateQuery, values);
   return rows[0];
 };

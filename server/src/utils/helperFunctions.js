@@ -1,4 +1,5 @@
 const { findMembersByProject } = require("../repositories/member.repository");
+const { findLinkByProject } = require("../repositories/paymentLink.repository");
 const { findProjectById } = require("../repositories/project.repository");
 
 const requireOwner = async (projectId, requesterId) => {
@@ -82,4 +83,14 @@ const calculateSplits = (amountNaira, members) => {
   return splits;
 };
 
-module.exports = { requireOwner, assertProjectPayable, calculateSplits };
+const projectEditable = async (projectId) => {
+  const project = await findProjectById(projectId);
+  const link = await findLinkByProject(projectId);
+  if (project.status === "archived" || link) {
+    const error = new Error("Project cannot be edited");
+    error.statusCode = 409;
+    throw error
+  }
+};
+
+module.exports = { requireOwner, assertProjectPayable, calculateSplits, projectEditable };

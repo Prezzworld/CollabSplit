@@ -2,9 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { getPayableLink } = require("../controllers/public.controller");
 const { initializePayment } = require("../controllers/payment.controller");
-const {
-  verifyPaystackSignature,
-} = require("../middlewares/webhook.middleware");
 
 router.get("/:token", getPayableLink);
 router.post("/:token/initialize", initializePayment);
