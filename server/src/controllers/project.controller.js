@@ -22,4 +22,36 @@ const createProject = async (req, res, next) => {
   }
 }
 
-module.exports = {createProject}
+const getProjects = async (req, res, next) => {
+  try {
+    const {userId} = req.user;
+    const projects = await projectService.getUserProjects(userId)
+    return res.status(200).json({
+      success: true,
+      data: projects
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+const getProjectDetails = async (req, res, next) => {
+  try {
+    const {projectId} = req.params
+    const {userId} = req.user
+    const projectDetails = await projectService.getProjectInformation({projectId, requesterId: userId})
+    return res.status(200).json({
+      success: true,
+      data: projectDetails
+    })
+  } catch (err) {
+    if(err.code === "22P02") {
+      const error = new Error("Invalid Id")
+      error.statusCode = 404
+      throw error
+    }
+    return next(err)
+  }
+}
+
+module.exports = {createProject, getProjects, getProjectDetails}
