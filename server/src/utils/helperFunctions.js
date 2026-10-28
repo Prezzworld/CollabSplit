@@ -1,4 +1,5 @@
 const { findMembersByProject } = require("../repositories/member.repository");
+const { findLinkByProject } = require("../repositories/paymentLink.repository");
 const { findProjectById } = require("../repositories/project.repository");
 
 const requireOwner = async (projectId, requesterId) => {
@@ -36,7 +37,7 @@ const assertProjectPayable = async (projectId) => {
   }
 
   const total = members.reduce((sum, m) => sum + Number(m.percentage), 0);
-  if (total !== 100) {
+  if (Math.round(total * 100) !== 10000) {
     const error = new Error(
       `Percentages must total exactly 100 (currently ${total})`,
     );
@@ -45,7 +46,7 @@ const assertProjectPayable = async (projectId) => {
   }
 
   const memberHasMissingBank = members.some(
-    (m) => !m.bank_name || !m.bank_code || !m.account_number,
+    (m) => !m.bank_name || !m.bank_code || !m.account_number || !m.country,
   );
   if (memberHasMissingBank) {
     const error = new Error("All member must have complete bank details");
@@ -82,4 +83,14 @@ const calculateSplits = (amountNaira, members) => {
   return splits;
 };
 
-module.exports = { requireOwner, assertProjectPayable, calculateSplits };
+const projectEditable = async (projectId) => {
+  const project = await findProjectById(projectId);
+  const link = await findLinkByProject(projectId);
+  if (project.status === "archived" || link) {
+    const error = new Error("Project cannot be edited");
+    error.statusCode = 409;
+    throw error
+  }
+};
+
+module.exports = { requireOwner, assertProjectPayable, calculateSplits, projectEditable };

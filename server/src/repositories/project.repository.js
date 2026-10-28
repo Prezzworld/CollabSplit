@@ -35,4 +35,25 @@ const findProjectById = async (projectId, client = pool) => {
   return rows[0];
 };
 
-module.exports = { createProject, findProjectById };
+const getProjects = async (userId, client  = pool) => {
+  const selectQuery = `
+    SELECT p.id, p.project_name, p.project_description, p.status, p.created_at,
+    pm.role, pm.percentage
+    FROM project_members pm
+    JOIN projects p ON p.id = pm.project_id
+    WHERE pm.user_id = $1
+    ORDER BY p.created_at DESC;
+  `;
+  const {rows} = await client.query(selectQuery, [userId])
+  return rows
+}
+
+const getProjectDetails = async (id, client = pool) => {
+  const selectQuery = `
+    SELECT id, owner_id, project_name, project_description, status, created_at FROM projects WHERE id = $1
+  `;
+  const {rows} = await client.query(selectQuery, [id])
+  return rows[0]
+}
+
+module.exports = { createProject, findProjectById, getProjects, getProjectDetails };
