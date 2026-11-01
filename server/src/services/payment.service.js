@@ -3,11 +3,12 @@ const {
   updatePaymentStatus,
 } = require("../repositories/payment.repository");
 const { findLinkByToken } = require("../repositories/paymentLink.repository");
+const {getPayableLink} = require("../repositories/public.repository");
 const crypto = require("crypto");
 const paystack = require("../config/paystack");
 
 const initializePayment = async ({ token, email, amount }) => {
-  const paymentLink = await findLinkByToken(token);
+  const paymentLink = await getPayableLink(token);
   if (!paymentLink) {
     const error = new Error("Payment link not found");
     error.statusCode = 404;
