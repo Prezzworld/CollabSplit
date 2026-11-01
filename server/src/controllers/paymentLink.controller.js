@@ -18,13 +18,6 @@ const createPaymentLink = async (req, res, next) => {
       data: paymentLink,
     });
   } catch (err) {
-    if (err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid input",
-        details: err.issues,
-      });
-    }
     return next(err);
   }
 };

@@ -12,13 +12,6 @@ const initializePayment = async (req, res, next) => {
       data: result
     })
   } catch (err) {
-    if (err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid input",
-        details: err.issues,
-      });
-    }
     return next(err);
   }
 }

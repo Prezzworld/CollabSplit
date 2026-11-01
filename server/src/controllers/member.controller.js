@@ -20,13 +20,6 @@ const addMember = async (req, res, next) => {
       data: member,
     });
   } catch (err) {
-    if (err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid input",
-        details: err.issues,
-      });
-    }
     return next(err);
   }
 };
@@ -60,13 +53,6 @@ const updateMemberDetails = async (req, res, next) => {
       data: updatedMember,
     });
   } catch (err) {
-    if (err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid input",
-        details: err.issues,
-      });
-    }
     return next(err);
   }
 };
@@ -88,13 +74,6 @@ const updatePercentage = async (req, res, next) => {
       data: updatedPercentage
     })
   } catch (err) {
-    if (err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid input",
-        details: err.issues,
-      });
-    }
     return next(err);
   }
 }

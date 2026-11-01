@@ -9,13 +9,13 @@ const pool = new Pool({
 });
 
 pool
-  .connect()
-  .then((client) => {
-    console.log("Connected to RumptyCloud PostgreSQL database successfully!");
-  }).then(client => {
-    client.release()
-  })
-  .catch((err) => console.error("Database connection error:", err.stack));
+  .query("SELECT 1")
+  .then(() =>
+    console.log("Connected to RumptyCloud postgreSQL database successfully"),
+  )
+  .catch((err) =>
+    console.error("Database connection error: ", err.stack || err),
+  );
 
 pool.on("error", (err, client) =>
   console.error("Error has occured: ", err, client),

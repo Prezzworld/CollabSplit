@@ -11,13 +11,6 @@ const createProject = async (req, res, next) => {
       data: project,
     })
   } catch (err) {
-    if (err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid input",
-        details: err.issues,
-      });
-    }
     return next(err)
   }
 }
@@ -45,11 +38,6 @@ const getProjectDetails = async (req, res, next) => {
       data: projectDetails
     })
   } catch (err) {
-    if(err.code === "22P02") {
-      const error = new Error("Invalid Id")
-      error.statusCode = 404
-      throw error
-    }
     return next(err)
   }
 }

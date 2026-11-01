@@ -10,13 +10,6 @@ const signup = async (req, res, next) => {
       data: user,
     });
   } catch (err) {
-    if (err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid input",
-        details: err.issues,
-      });
-    }
     return next(err);
   }
 };
@@ -31,13 +24,6 @@ const login = async (req, res, next) => {
       token: data.token
     })
   } catch (err) {
-    if(err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid input",
-        details: err.issues
-      })
-    }
     return next(err)
   }
 }

@@ -2,7 +2,6 @@ const {
   createPendingPayment,
   updatePaymentStatus,
 } = require("../repositories/payment.repository");
-const { findLinkByToken } = require("../repositories/paymentLink.repository");
 const {getPayableLink} = require("../repositories/public.repository");
 const crypto = require("crypto");
 const paystack = require("../config/paystack");
@@ -15,8 +14,8 @@ const initializePayment = async ({ token, email, amount }) => {
     throw error;
   }
 
-  if (paymentLink.link_status !== "active") {
-    const error = new Error("Payment link is no longer active");
+  if (paymentLink.link_status !== "active" || paymentLink.project_status === "archived") {
+    const error = new Error("This payment link is no longer active");
     error.statusCode = 410;
     throw error;
   }
