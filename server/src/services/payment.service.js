@@ -15,7 +15,7 @@ const initializePayment = async ({ token, email, amount }) => {
     throw error;
   }
 
-  if (paymentLink.status !== "active") {
+  if (paymentLink.link_status !== "active") {
     const error = new Error("Payment link is no longer active");
     error.statusCode = 410;
     throw error;
@@ -24,7 +24,7 @@ const initializePayment = async ({ token, email, amount }) => {
   const referenceId = `cs_${crypto.randomBytes(12).toString("hex")}`;
 
   const payment = await createPendingPayment({
-    paymentLinkId: paymentLink.id,
+    paymentLinkId: paymentLink.link_id,
     amount,
     currency: "NGN",
     payerEmail: email,
