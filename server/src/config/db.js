@@ -12,4 +12,6 @@ pool.connect()
   .then(() => console.log('Connected to RumptyCloud PostgreSQL database successfully!'))
   .catch((err) => console.error('Database connection error:', err.stack));
 
+pool.on('error', (err, client) => console.error("Error has occured: ", err, client))
+
 module.exports = pool
