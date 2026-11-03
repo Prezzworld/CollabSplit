@@ -56,4 +56,12 @@ const getProjectDetails = async (id, client = pool) => {
   return rows[0]
 }
 
-module.exports = { createProject, findProjectById, getProjects, getProjectDetails };
+const updateProjectStatus = async ({projectId, status}, client  = pool) => {
+  const updateQuery = `
+    UPDATE projects SET status = $1 WHERE id = $2 RETURNING id, owner_id, project_name, project_description, status, updated_at
+  `;
+  const {rows} = await client.query(updateQuery, [status, projectId])
+  return rows[0]
+}
+
+module.exports = { createProject, findProjectById, getProjects, getProjectDetails, updateProjectStatus };

@@ -42,4 +42,18 @@ const getProjectDetails = async (req, res, next) => {
   }
 }
 
-module.exports = {createProject, getProjects, getProjectDetails}
+const updateProjectStatus = async (req, res, next) => {
+  try {
+    const {projectId} = req.params;
+    const {userId} = req.user;
+    const updatedProject = await projectService.updateProjectStat({projectId, status: "archived", requesterId: userId})
+    return res.status(200).json({
+      success: true,
+      data: updatedProject
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+module.exports = {createProject, getProjects, getProjectDetails, updateProjectStatus}

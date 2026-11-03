@@ -1,6 +1,8 @@
-const {createProject, getProjects, getProjectDetails} = require("../repositories/project.repository")
+const pool = require("../config/db")
+const {createProject, getProjects, getProjectDetails, updateProjectStatus} = require("../repositories/project.repository")
 const {findMembersByProject} = require("../repositories/member.repository")
-const { findLinkByProject } = require("../repositories/paymentLink.repository")
+const { findLinkByProject, updatePaymentLink } = require("../repositories/paymentLink.repository")
+const {requireOwner, projectEditable} = require("../utils/helperFunctions")
 
 const createNewProject = async ({project_name, project_description, owner_id}) => {
   const project = await createProject({project_name, project_description, owner_id});
@@ -33,4 +35,45 @@ const getProjectInformation = async ({projectId, requesterId}) => {
   };
 }
 
-module.exports = {createNewProject, getUserProjects, getProjectInformation}
+const updateProjectStat = async ({projectId, status, requesterId}) => {
+  const project = await requireOwner(projectId, requesterId);
+  if(project.status === "archived") {
+    const projectError = new Error("Project is already archived");
+    projectError.statusCode = 409;
+    throw projectError
+  }
+  
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const updatedProject = await updateProjectStatus({projectId, status}, client)
+    if(!updatedProject) {
+      await client.query("ROLLBACK");
+      return
+    }
+    const link = await findLinkByProject(projectId)
+    if(link) {
+      const updatedLink = await updatePaymentLink(
+        { linkId: link.id, status: "inactive" },
+        client,
+      );
+
+      if (!updatedLink) {
+        await client.query("ROLLBACK");
+        return;
+      }
+    }
+
+
+     await client.query("COMMIT");
+     return updatedProject;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = {createNewProject, getUserProjects, getProjectInformation, updateProjectStat}
