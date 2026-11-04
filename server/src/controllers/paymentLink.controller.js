@@ -36,4 +36,23 @@ const getPaymentLink = async (req, res, next) => {
   }
 }
 
-module.exports = {createPaymentLink, getPaymentLink}
+const updatePaymentLinkInfo = async (req, res, next) => {
+  try {
+    const { projectId } = req.params;
+    const requesterId = req.user.userId;
+    const {description, suggested_amount} = req.body;
+    const updatedLink = await paymentLinkService.updatePaymentLinkInformation({
+      projectId,
+      requesterId,
+      data: {description: description || null, suggested_amount: suggested_amount || null}
+    })
+    return res.status(200).json({
+      success: true,
+      data: updatedLink
+    })
+  } catch (err) {
+    return next(err);
+  }
+}
+
+module.exports = {createPaymentLink, getPaymentLink, updatePaymentLinkInfo}

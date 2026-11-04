@@ -1,7 +1,7 @@
 const pool = require("../config/db")
 const {createProject, getProjects, getProjectDetails, updateProjectStatus} = require("../repositories/project.repository")
 const {findMembersByProject} = require("../repositories/member.repository")
-const { findLinkByProject, updatePaymentLink } = require("../repositories/paymentLink.repository")
+const { findLinkByProject, updatePaymentLinkStatus } = require("../repositories/paymentLink.repository")
 const {requireOwner, projectEditable} = require("../utils/helperFunctions")
 
 const createNewProject = async ({project_name, project_description, owner_id}) => {
@@ -54,7 +54,7 @@ const updateProjectStat = async ({projectId, status, requesterId}) => {
     }
     const link = await findLinkByProject(projectId)
     if(link) {
-      const updatedLink = await updatePaymentLink(
+      const updatedLink = await updatePaymentLinkStatus(
         { linkId: link.id, status: "inactive" },
         client,
       );

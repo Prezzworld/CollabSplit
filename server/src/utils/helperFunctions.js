@@ -17,6 +17,17 @@ const requireOwner = async (projectId, requesterId) => {
   return project;
 };
 
+const requireMember = async (projectId, requesterId) => {
+  const members = await findMembersByProject(projectId);
+  const memberPresent = members.find((m) => m.user_id === requesterId);
+  if (!memberPresent) {
+    const error = new Error("You are not a member of this project");
+    error.statusCode = 403;
+    throw error;
+  }
+  return members
+}
+
 const assertProjectPayable = async (projectId) => {
   const members = await findMembersByProject(projectId);
   if (members.length === 0) {
@@ -97,4 +108,4 @@ const generateUrl = (token) => {
   return `${process.env.CLIENT_BASE_URL}/pay/${token}`;
 };
 
-module.exports = { requireOwner, assertProjectPayable, calculateSplits, projectEditable, generateUrl };
+module.exports = { requireOwner, assertProjectPayable, calculateSplits, projectEditable, generateUrl, requireMember };

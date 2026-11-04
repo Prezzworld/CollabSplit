@@ -46,7 +46,7 @@ const findLinkById = async (linkId, client = pool) => {
   return rows[0];
 };
 
-const updatePaymentLink = async ({linkId, status}, client = pool) => {
+const updatePaymentLinkStatus = async ({linkId, status}, client = pool) => {
   const updateQuery = `
     UPDATE payment_links SET status = $1 WHERE id = $2 RETURNING id, project_id, token, status, description, suggested_amount, updated_at
   `
@@ -54,13 +54,13 @@ const updatePaymentLink = async ({linkId, status}, client = pool) => {
   return rows[0]
 }
 
-// const getPaymentLink = async (linkId, client = pool) => {
-//   const selectQuery = `
-//     SELECT id, project_id, token, status, description, suggested_amount, created_at FROM payment_links WHERE id = $1
-//   `;
-//   const {rows} = await client.query(selectQuery, [linkId]);
-//   return rows[0];
-// }
+const updatePaymentLinkInfo = async ({linkId, description, suggestedAmount}, client = pool) => {
+  const updateQuery = `
+    UPDATE payment_links SET description = $1, suggested_amount = $2 WHERE id = $3 RETURNING id, project_id, token, status, description, suggested_amount, updated_at
+  `;
+  const {rows} = await client.query(updateQuery, [description, suggestedAmount, linkId])
+  return rows[0]
+}
 
 
-module.exports = { findLinkByProject, findLinkByToken, createPaymentLink, findLinkById, updatePaymentLink};
+module.exports = { findLinkByProject, findLinkByToken, createPaymentLink, findLinkById, updatePaymentLinkStatus, updatePaymentLinkInfo };
