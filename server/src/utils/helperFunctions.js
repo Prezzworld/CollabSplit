@@ -93,4 +93,8 @@ const projectEditable = async (projectId) => {
   }
 };
 
-module.exports = { requireOwner, assertProjectPayable, calculateSplits, projectEditable };
+const generateUrl = (token) => {
+  return `${process.env.CLIENT_BASE_URL}/pay/${token}`;
+};
+
+module.exports = { requireOwner, assertProjectPayable, calculateSplits, projectEditable, generateUrl };
