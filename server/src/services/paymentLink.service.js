@@ -9,6 +9,7 @@ const {
   findLinkByProject,
   createPaymentLink,
   updatePaymentLinkInfo,
+  switchLinkStatus
 } = require("../repositories/paymentLink.repository.js");
 const {
   findMembersByProject,
@@ -98,4 +99,24 @@ const updatePaymentLinkInformation = async ({
   }
 };
 
-module.exports = { createLink, getPaymentLink, updatePaymentLinkInformation };
+const updatePaymentLinkStatus = async ({projectId, requesterId, status}) => {
+  const projectOwner = await requireOwner(projectId, requesterId);
+  const link = await findLinkByProject(projectId);
+  if (!link) {
+    const error = new Error("No payment link found for this project");
+    error.statusCode = 404;
+    throw error;
+  }
+  const project = projectOwner;
+  if(project.status === "archived" && status === "active") {
+    const error = new Error("Cannot activate payment link for an archived project");
+    error.statusCode = 409;
+    throw error;
+  }
+  if((link.status === "inactive" && status === "inactive") || (link.status === "active" && status === "active")) {
+    return link;
+  }
+  return await switchLinkStatus({ linkId: link.id, status });
+};
+
+module.exports = { createLink, getPaymentLink, updatePaymentLinkInformation, updatePaymentLinkStatus };
