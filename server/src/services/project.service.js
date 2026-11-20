@@ -49,10 +49,11 @@ const updateProjectStat = async ({projectId, status, requesterId}) => {
     await client.query("BEGIN");
     const updatedProject = await updateProjectStatus({projectId, status}, client)
     if(!updatedProject) {
-      await client.query("ROLLBACK");
-      return
+      const error = new Error("Failed to update project status");
+      error.statusCode = 500;
+      throw error;
     }
-    const link = await findLinkByProject(projectId)
+    const link = await findLinkByProject(projectId, client)
     if(link) {
       const updatedLink = await updatePaymentLinkStatus(
         { linkId: link.id, status: "inactive" },
@@ -60,8 +61,9 @@ const updateProjectStat = async ({projectId, status, requesterId}) => {
       );
 
       if (!updatedLink) {
-        await client.query("ROLLBACK");
-        return;
+        const error = new Error("Failed to update payment link status");
+        error.statusCode = 500;
+        throw error;
       }
     }
 
