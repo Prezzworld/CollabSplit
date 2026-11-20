@@ -82,10 +82,13 @@ const updatePaymentLinkInformation = async ({
     throw error;
   }
   try {
+    const description = data.description !== undefined ? data.description : link.description; // optional: can be deleted since repository covers this, leaving it here for safety and leanring reasons
+    const suggestedAmount = data.suggested_amount !== undefined ? data.suggested_amount : link.suggested_amount; // optional: same reason as above
+
     const updatedLink = await updatePaymentLinkInfo({
       linkId: link.id,
-      description: data.description,
-      suggestedAmount: data.suggested_amount,
+      description: description,
+      suggestedAmount: suggestedAmount,
     });
     const url = generateUrl(updatedLink.token);
     return { ...updatedLink, url };

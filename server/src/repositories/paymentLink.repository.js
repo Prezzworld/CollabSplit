@@ -56,9 +56,9 @@ const updatePaymentLinkStatus = async ({linkId, status}, client = pool) => {
 
 const updatePaymentLinkInfo = async ({linkId, description, suggestedAmount}, client = pool) => {
   const updateQuery = `
-    UPDATE payment_links SET description = $1, suggested_amount = $2 WHERE id = $3 RETURNING id, project_id, token, status, description, suggested_amount, updated_at
+    UPDATE payment_links SET description = CASE WHEN $4 THEN $1 ELSE description END, suggested_amount = CASE WHEN $5 THEN $2 ELSE suggested_amount END WHERE id = $3 RETURNING id, project_id, token, status, description, suggested_amount, updated_at
   `;
-  const {rows} = await client.query(updateQuery, [description, suggestedAmount, linkId])
+  const {rows} = await client.query(updateQuery, [description, suggestedAmount, linkId, description !== undefined, suggestedAmount !== undefined])
   return rows[0]
 }
 
