@@ -20,10 +20,10 @@ const addMemberToProject = async (
     projectId,
     userId,
     percentage,
-    bankName,
-    bankCode,
-    accountNumber,
-    country,
+    bankName || null,
+    bankCode || null,
+    accountNumber || null,
+    country || null,
   ];
   const { rows } = await client.query(insertQuery, values);
   return rows[0];
