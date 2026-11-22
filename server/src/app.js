@@ -1,5 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
+const helmet = require("helmet");
 const cors = require("cors");
 const errorHandler = require("./middlewares/error.middleware");
 const authRoutes = require("./routes/auth.routes");
@@ -7,7 +9,8 @@ const projectRoutes = require("./routes/project.routes");
 const publicPayRoutes = require("./routes/public.routes");
 const webhookRoutes = require("./routes/webhook.routes");
 
-app.use(cors());
+app.use(helmet());
+app.use(cors({origin: process.env.CLIENT_BASE_URL}));
 app.use(
   express.json({
     verify: (req, res, buf) => {
