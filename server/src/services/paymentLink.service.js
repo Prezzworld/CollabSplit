@@ -73,7 +73,6 @@ const updatePaymentLinkInformation = async ({
   requesterId,
   data,
 }) => {
-  await requireMember(projectId, requesterId);
   await requireOwner(projectId, requesterId);
   const link = await findLinkByProject(projectId);
   if (!link) {
