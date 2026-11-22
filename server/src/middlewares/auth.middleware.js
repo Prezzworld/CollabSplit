@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const authenticate = (req, res, next) => {
-  const authorization = req.headers["x-auth-token"];
+  const authorization = req.headers["authorization"];
   if(!authorization) {
     const authError = new Error("Missing token");
     authError.statusCode = 401;
@@ -20,7 +20,7 @@ const authenticate = (req, res, next) => {
     return next(authError)
   }
   try {
-    const verifyUser = jwt.verify(token, process.env.JWT_SECRET);
+    const verifyUser = jwt.verify(token, process.env.JWT_SECRET, {algorithms: ["HS256"]});
     req.user = verifyUser
     return next()
   } catch (err) {
