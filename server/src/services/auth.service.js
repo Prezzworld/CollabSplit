@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const {
   createUser,
   findUserByEmail,
+  findUserById
 } = require("../repositories/user.repository");
 
 const signup = async ({ name, email, phone, password }) => {
@@ -40,4 +41,14 @@ const login = async ({ email, password }) => {
     return {user, token}
 };
 
-module.exports = { signup, login };
+const getCurrentUser = async (userId) => {
+  const user = await findUserById(userId);
+  if(!user) {
+    const notFoundError = new Error("User not found");
+    notFoundError.statusCode = 404;
+    throw notFoundError;
+  }
+  return user;
+};
+
+module.exports = { signup, login, getCurrentUser };

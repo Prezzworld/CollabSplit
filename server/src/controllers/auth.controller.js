@@ -16,16 +16,29 @@ const signup = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const loginData = loginSchema.parse(req.body)
-    const data = await authService.login(loginData)
+    const loginData = loginSchema.parse(req.body);
+    const data = await authService.login(loginData);
     return res.status(200).json({
       success: true,
       data: data.user,
-      token: data.token
+      token: data.token,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const {userId} = req.user;
+    const user = await authService.getCurrentUser(userId);
+    return res.status(200).json({
+      success: true,
+      data: user
     })
   } catch (err) {
-    return next(err)
+    return next(err);
   }
-}
+};
 
-module.exports = { signup, login };
+module.exports = { signup, login, getCurrentUser };
